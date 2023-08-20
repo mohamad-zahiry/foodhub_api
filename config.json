@@ -1,0 +1,9 @@
+{
+    "SECRET_KEY": "akljflsdkjflks&GGF&@^%$H(HJKJjkl(}-=jdkj23_d'fdjifsl.s,>0&*^%jkfdsij/3.@#jfsdlj|{}]765&",
+    "DB_NAME": "foodhub",
+    "DB_USER": "rattin",
+    "DB_PASS": "password",
+    "DB_HOST": "172.17.0.1",
+    "DB_PORT": "3306",
+    "PHONENUMBER_DEFAULT_REGION": "ISO-3166-1 two-letter country code"
+}
