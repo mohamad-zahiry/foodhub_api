@@ -1,0 +1,26 @@
+[
+    {
+        "model": "auth.Group",
+        "fields": {
+            "name": "customer"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "fields": {
+            "name": "chef"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "fields": {
+            "name": "admin"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "fields": {
+            "name": "owner"
+        }
+    }
+]
