@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
     "apps.accounts",
     "apps.foods",
     "apps.loyalty_club",
@@ -115,3 +116,10 @@ FIXTURE_DIRS = [BASE_DIR / "fixtures"]
 PHONENUMBER_DB_FORMAT = "INTERNATIONAL"
 PHONENUMBER_DEFAULT_REGION = get_config("PHONENUMBER_DEFAULT_REGION")
 PHONENUMBER_DEFAULT_FORMAT = "INTERNATIONAL"
+
+# Django rest framework settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
