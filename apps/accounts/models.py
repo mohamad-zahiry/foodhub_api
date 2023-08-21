@@ -6,11 +6,12 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class User(AbstractUser):
     name = models.CharField(max_length=128)
-    phone = PhoneNumberField(unique=True)
-    email = models.EmailField()
+    phone = PhoneNumberField()
+    email = models.EmailField(unique=True)
     coupons = models.ManyToManyField(to="loyalty_club.Coupon")
 
-    USERNAME_FIELD = "phone"
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
 
 class Address(models.Model):
