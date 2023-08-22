@@ -1,3 +1,4 @@
+from django.utils.timezone import timedelta
 from .base import *
 
 
@@ -19,4 +20,14 @@ DATABASES = {
         "HOST": get_config("DB_HOST"),
         "PORT": get_config("DB_PORT"),
     }
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=get_config("ACCESS_TOKEN_LIFETIME_in_minute")
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        minutes=get_config("REFRESH_TOKEN_LIFETIME_in_minute")
+    ),
 }

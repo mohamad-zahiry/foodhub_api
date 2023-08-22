@@ -1,4 +1,5 @@
 from .base import *
+from django.utils.timezone import timedelta
 
 
 SECRET_KEY = "django-insecure-x+wc7i=$ny*tg_6p31f74b(68f*wte*=cdpw=0alelrvktf7$m"
@@ -17,3 +18,12 @@ DATABASES = {
 }
 
 PHONENUMBER_DEFAULT_REGION = "IR"
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=get_config("ACCESS_TOKEN_LIFETIME_in_minute")
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        minutes=get_config("REFRESH_TOKEN_LIFETIME_in_minute")
+    ),
+}
