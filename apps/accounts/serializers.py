@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from phonenumber_field.serializerfields import PhoneNumberField
 
 from .models import User
 
@@ -43,3 +44,12 @@ class ChangePasswordSerializer(serializers.Serializer):
         instance.set_password(validated_data["new_password_1"])
         instance.save()
         return instance
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)
+    phone = PhoneNumberField()
+
+    class Meta:
+        model = User
+        fields = "email", "name", "phone"
