@@ -13,39 +13,23 @@ from .serializers import (
     CreateAddressSerailizer,
     UpdateDeleteAddressSerailizer,
 )
-from .models import User
-from .mixins import AddressViewMixin
+from .mixins import UserViewMixin, AddressViewMixin
 
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
 
 
-class ChangePasswordView(generics.UpdateAPIView):
-    queryset = User.objects.all()
+class ChangePasswordView(UserViewMixin, generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
 
 
-class UpdateUserView(generics.UpdateAPIView):
-    queryset = User.objects.all()
+class UpdateUserView(UserViewMixin, generics.UpdateAPIView):
     serializer_class = UpdateUserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
 
 
-class UserView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
+class UserView(UserViewMixin, generics.RetrieveAPIView):
     serializer_class = UpdateUserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
 
 
 class AddressView(AddressViewMixin, generics.ListAPIView):

@@ -1,7 +1,15 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Address
+from .models import User, Address
+
+
+class UserViewMixin:
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 
 class AddressViewMixin:
