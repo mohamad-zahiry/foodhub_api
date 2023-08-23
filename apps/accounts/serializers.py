@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from phonenumber_field.serializerfields import PhoneNumberField
 
-from .models import User
+from .models import User, Address
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -52,4 +52,33 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "email", "name", "phone"
+        fields = ("email", "name", "phone")
+
+
+class AddressSerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ("pk", "address")
+
+
+class CreateAddressSerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ("address",)
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["user"]
+        instance = Address(**validated_data)
+        instance.save()
+        return instance
+
+
+class UpdateDeleteAddressSerailizer(serializers.ModelSerializer):
+    pk = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Address
+        fields = ("pk", "address")
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
