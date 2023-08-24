@@ -1,7 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 
 from phonenumber_field.modelfields import PhoneNumberField
+
+from apps.constants import GROUPS
 
 
 class UserManager(BaseUserManager):
@@ -44,6 +46,13 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    def save(self, *args, **kwargs):
+        default_group = Group.objects.get(name=GROUPS.CUSTOMER)
+        super().save(*args, **kwargs)
+        if not self.groups.all().exists():
+            self.groups.add(default_group)
+        return super().save(*args, **kwargs)
 
 
 class Address(models.Model):
