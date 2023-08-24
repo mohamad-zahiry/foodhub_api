@@ -2,6 +2,7 @@ from rest_framework import serializers
 from phonenumber_field.serializerfields import PhoneNumberField
 
 from .models import User, Address
+from .utils import change_group
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -53,6 +54,31 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("email", "name", "phone")
+
+
+class ChangeGroupSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True)
+
+    class Meta:
+        fields = ("email", "group")
+
+    def validate(self, attrs):
+        try:
+            attrs["email"] = User.objects.get(email=attrs["email"])
+        except User.DoesNotExist:
+            raise serializers.ValidationError({"email": "user does not exist"})
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        change_group(
+            sender=self.context.get("sender"),
+            user=validated_data["email"],
+            group=self.context.get("group"),
+        )
+        return validated_data["email"]
+
+    def update(self, instance, validated_data):
+        return instance
 
 
 class AddressSerailizer(serializers.ModelSerializer):

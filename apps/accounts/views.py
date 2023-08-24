@@ -2,9 +2,9 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import mixins
-
 from rest_framework.permissions import IsAuthenticated
 
+from apps.constants import GROUPS, P, perm_name
 from .serializers import (
     CreateUserSerializer,
     ChangePasswordSerializer,
@@ -13,7 +13,8 @@ from .serializers import (
     CreateAddressSerailizer,
     UpdateDeleteAddressSerailizer,
 )
-from .mixins import UserViewMixin, AddressViewMixin
+from .mixins import UserViewMixin, AddressViewMixin, ChangeGroupMixin
+from .utils import permission
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -30,6 +31,21 @@ class UpdateUserView(UserViewMixin, generics.UpdateAPIView):
 
 class UserView(UserViewMixin, generics.RetrieveAPIView):
     serializer_class = UpdateUserSerializer
+
+
+class AddCustomerView(ChangeGroupMixin):
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_CUSTOMER))]
+    group = GROUPS.CUSTOMER
+
+
+class AddChefView(ChangeGroupMixin):
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_CHEF))]
+    group = GROUPS.CHEF
+
+
+class AddAdminView(ChangeGroupMixin):
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_ADMIN))]
+    group = GROUPS.ADMIN
 
 
 class AddressView(AddressViewMixin, generics.ListAPIView):
