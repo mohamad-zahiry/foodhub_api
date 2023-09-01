@@ -20,9 +20,7 @@ class Food(models.Model):
         BEVERAGE = "B", _("Beverage")
 
     name = models.CharField(max_length=50)
-    category = models.CharField(
-        max_length=1, choices=Category.choices, default=Category.FOOD
-    )
+    category = models.CharField(max_length=1, choices=Category.choices, default=Category.FOOD)
     ingredients = models.ManyToManyField(to="Ingredient")
     description = models.CharField(max_length=500, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
@@ -42,7 +40,7 @@ class Food(models.Model):
 
             img.save(settings.MEDIA_ROOT / name, "webp", optimize=True)
             self.image.name = name
-        return super().save(*args, **kwargs)
+        super().save(force_update=True)
 
     def delete(self, *args, **kwargs):
         os.remove(self.image.path)
