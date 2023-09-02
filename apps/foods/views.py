@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -34,9 +34,18 @@ class FoodByCategoryView(generics.ListAPIView):
 class ListCreateFoodsView(generics.ListCreateAPIView):
     serializer_class = FoodSerializer
     queryset = Food.objects.all()
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_DELETE_CHANGE_FOOD))]
 
 
-class FoodUpdateView(generics.UpdateAPIView):
+class FoodUpdateDestroyView(mixins.DestroyModelMixin, generics.UpdateAPIView):
     serializer_class = FoodUpdateSerializer
     queryset = Food.objects.all()
     permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_DELETE_CHANGE_FOOD))]
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class FoodView(generics.RetrieveAPIView):
+    serializer_class = FoodUpdateSerializer
+    queryset = Food.objects.all()
