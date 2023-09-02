@@ -26,14 +26,6 @@ urlpatterns = [
     path("add/admin/", AddAdminView.as_view(), name="add_admin"),
     path("address/", AddressView.as_view(), name="address"),
     path("address/add/", CreateAddressView.as_view(), name="create_address"),
-    path(
-        "address/update/",
-        UpdateDeleteAddressView.as_view(http_method_names=["put"]),
-        name="update_address",
-    ),
-    path(
-        "address/delete/",
-        UpdateDeleteAddressView.as_view(http_method_names=["delete"]),
-        name="delete_address",
-    ),
+    path("address/update/", UpdateDeleteAddressView.as_view(http_method_names=["put"]), name="update_address"),
+    path("address/delete/", UpdateDeleteAddressView.as_view(http_method_names=["delete"]), name="delete_address"),
 ]

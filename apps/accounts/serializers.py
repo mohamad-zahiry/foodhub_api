@@ -28,17 +28,13 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs["new_password_1"] != attrs["new_password_2"]:
-            raise serializers.ValidationError(
-                {"new_password_2": "new_password_1 and new_password_2 is not equal"}
-            )
+            raise serializers.ValidationError({"new_password_2": ["new_password_1 and new_password_2 is not equal"]})
         return super().validate(attrs)
 
     def validate_old_password(self, value):
         user = self.context["request"].user
         if not user.check_password(value):
-            raise serializers.ValidationError(
-                {"old_password": "old_password is not correct"}
-            )
+            raise serializers.ValidationError({"old_password": ["old_password is not correct"]})
         return value
 
     def update(self, instance, validated_data):
@@ -66,7 +62,7 @@ class ChangeGroupSerializer(serializers.Serializer):
         try:
             attrs["email"] = User.objects.get(email=attrs["email"])
         except User.DoesNotExist:
-            raise serializers.ValidationError({"email": "user does not exist"})
+            raise serializers.ValidationError({"email": ["user does not exist"]})
         return super().validate(attrs)
 
     def create(self, validated_data):

@@ -120,7 +120,7 @@ PHONENUMBER_DEFAULT_FORMAT = "INTERNATIONAL"
 
 # Django rest framework settings
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ],
 }

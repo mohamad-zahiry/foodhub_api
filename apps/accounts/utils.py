@@ -23,8 +23,8 @@ def _change_group(user: User, group: Group):
 
 def change_group(sender: User, user: User, group: Group):
     if user.is_staff:
-        # raise PermissionDenied({"group": "you cannot change group of a higher user"})
-        raise PermissionDenied({"group": "you cannot change this user group"})
+        # raise PermissionDenied({"group": ["you cannot change group of a higher user"]})
+        raise PermissionDenied({"group": ["you cannot change this user group"]})
 
     if sender.is_staff:
         return _change_group(user, group)
@@ -33,15 +33,15 @@ def change_group(sender: User, user: User, group: Group):
     user_group = user.groups.first()
 
     if sender_group == group:
-        # raise PermissionDenied({"group": "you cannot promote a user to your group"})
-        raise PermissionDenied({"group": "you cannot change this user group"})
+        # raise PermissionDenied({"group": ["you cannot promote a user to your group"]})
+        raise PermissionDenied({"group": ["you cannot change this user group"]})
 
     if sender_group == user_group:
-        # raise PermissionDenied({"group": "you cannot change your groupmates info"})
-        raise PermissionDenied({"group": "you cannot change this user group"})
+        # raise PermissionDenied({"group": ["you cannot change your groupmates info"]})
+        raise PermissionDenied({"group": ["you cannot change this user group"]})
 
     if user_group.name not in CAN_CHANGE_GROUP[sender_group.name]:
-        # raise PermissionDenied({"group": "you cannot change group of a higher user"})
-        raise PermissionDenied({"group": "you cannot change this user group"})
+        # raise PermissionDenied({"group": ["you cannot change group of a higher user"]})
+        raise PermissionDenied({"group": ["you cannot change this user group"]})
 
     return _change_group(user, group)
