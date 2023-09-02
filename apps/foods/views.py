@@ -1,10 +1,14 @@
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from accounts.utils import permission
+from constants import perm_name, P
 
 from .models import Food
 from .pagination import FoodByCategoryPagination
-from .serializers import FoodSerializer
+from .serializers import FoodSerializer, FoodUpdateSerializer
 
 
 class CategoriesView(APIView):
@@ -30,3 +34,9 @@ class FoodByCategoryView(generics.ListAPIView):
 class ListCreateFoodsView(generics.ListCreateAPIView):
     serializer_class = FoodSerializer
     queryset = Food.objects.all()
+
+
+class FoodUpdateView(generics.UpdateAPIView):
+    serializer_class = FoodUpdateSerializer
+    queryset = Food.objects.all()
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_DELETE_CHANGE_FOOD))]
