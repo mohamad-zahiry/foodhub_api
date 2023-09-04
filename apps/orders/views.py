@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .models import OrderItem
 from .serializers import OrderItemSerializer
 
 
@@ -17,3 +18,8 @@ class CartUpdateView(generics.GenericAPIView):
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
+class OrderItemDeleteView(generics.DestroyAPIView):
+    queryset = OrderItem.objects.all()
+    permission_classes = [IsAuthenticated]
