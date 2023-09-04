@@ -20,9 +20,9 @@ class DoneOrderItem(OrderItem):
 class OrderAbstract(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.DO_NOTHING)
     date = models.DateField(default=timezone.now)
-    final_price = models.DecimalField(max_digits=8, decimal_places=2)
-    address = models.CharField(max_length=200)
-    coupon = models.ForeignKey(to="loyalty_club.Coupon", on_delete=models.DO_NOTHING)
+    final_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    address = models.CharField(max_length=200, blank=True, default="")
+    coupon = models.ForeignKey(to="loyalty_club.Coupon", on_delete=models.DO_NOTHING, null=True)
     phone = PhoneNumberField()
 
     class Meta:
@@ -39,9 +39,7 @@ class Order(OrderAbstract):
         ARRIVED = "A", _("Arrived")
 
     order_items = models.ManyToManyField(to="OrderItem")
-    status = models.CharField(
-        max_length=1, choices=Status.choices, default=Status.IN_CART
-    )
+    status = models.CharField(max_length=1, choices=Status.choices, default=Status.IN_CART)
 
 
 class DoneOrder(OrderAbstract):
