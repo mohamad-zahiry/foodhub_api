@@ -13,6 +13,7 @@ class ShortFoodSerializer(serializers.PrimaryKeyRelatedField, serializers.ModelS
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     food = ShortFoodSerializer(queryset=Food.objects.all())
     total_price = serializers.DecimalField(max_digits=8, decimal_places=2, read_only=True)
     discount = serializers.DecimalField(max_digits=8, decimal_places=2, read_only=True)
@@ -20,7 +21,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ("food", "quantity", "total_price", "discount")
+        fields = ("id", "food", "quantity", "total_price", "discount")
 
     def create(self, validated_data):
         order, order_item = update_order(
