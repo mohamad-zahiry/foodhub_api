@@ -1,13 +1,14 @@
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MinValueValidator
 
 from phonenumber_field.modelfields import PhoneNumberField
 
 
 class OrderItem(models.Model):
     food = models.ForeignKey(to="foods.Food", on_delete=models.DO_NOTHING)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(validators=[MinValueValidator(1)])
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
     discount = models.FloatField()
     user = models.ForeignKey(to="accounts.User", on_delete=models.DO_NOTHING)
