@@ -41,8 +41,12 @@ def _set_order_item(food: Food, quantity: int, user: User) -> [float, OrderItem]
     return old_oitp, order_item
 
 
+def get_cart(user: User) -> Order:
+    return Order.objects.get_or_create(user=user, status=Order.Status.IN_CART[0])[0]
+
+
 def update_order(food: Food, quantity: float, user: User) -> [Order, OrderItem]:
-    order, _ = Order.objects.get_or_create(user=user, status=Order.Status.IN_CART[0])
+    order = get_cart(user)
     old_oitp, order_item = _set_order_item(food, quantity, user)
 
     order.final_price -= old_oitp

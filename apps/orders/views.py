@@ -3,7 +3,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import OrderItem
-from .serializers import OrderItemSerializer
+from .serializers import OrderItemSerializer, CartSerializer
+from .utils import get_cart
+
+
+class CartView(generics.RetrieveAPIView):
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_cart(self.request.user)
 
 
 class CartUpdateView(generics.GenericAPIView):

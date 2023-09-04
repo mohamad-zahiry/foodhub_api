@@ -3,7 +3,7 @@ from rest_framework import serializers
 from foods.models import Food
 
 from .utils import update_order
-from .models import OrderItem
+from .models import Order, OrderItem
 
 
 class ShortFoodSerializer(serializers.PrimaryKeyRelatedField, serializers.ModelSerializer):
@@ -30,3 +30,21 @@ class OrderItemSerializer(serializers.ModelSerializer):
             user=self.context["user"],
         )
         return order_item
+
+
+class FoodSerializer_for_cart(serializers.ModelSerializer):
+    class Meta:
+        model = Food
+        fields = ("name", "category", "price", "image")
+
+
+class OrderItemSerializer_for_cart(OrderItemSerializer):
+    food = FoodSerializer_for_cart(read_only=True)
+
+
+class CartSerializer(serializers.ModelSerializer):
+    order_items = OrderItemSerializer_for_cart(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ("final_price", "order_items")
