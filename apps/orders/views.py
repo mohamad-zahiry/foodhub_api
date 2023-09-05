@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from .models import OrderItem
 from .serializers import OrderItemSerializer, CartSerializer
-from .utils import get_cart
+from .utils import get_cart, delete_order_item
 
 
 class CartView(generics.RetrieveAPIView):
@@ -32,3 +32,6 @@ class CartUpdateView(generics.GenericAPIView):
 class OrderItemDeleteView(generics.DestroyAPIView):
     queryset = OrderItem.objects.all()
     permission_classes = [IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        delete_order_item(instance)

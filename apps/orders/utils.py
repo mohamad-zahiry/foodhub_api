@@ -58,3 +58,10 @@ def update_order(food: Food, quantity: float, user: User) -> [Order, OrderItem]:
     order.final_price += order_item.total_price - Decimal(order_item.discount)
     order.save()
     return order, order_item
+
+
+def delete_order_item(order_item: OrderItem):
+    order = OrderItem.objects.prefetch_related("order_set").get(pk=order_item.pk).order_set.first()
+    order.final_price -= order_item.total_price - Decimal(order_item.discount)
+    order.save()
+    order_item.delete()
