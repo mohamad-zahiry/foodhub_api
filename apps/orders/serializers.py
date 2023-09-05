@@ -35,7 +35,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class FoodSerializer_for_cart(serializers.ModelSerializer):
     class Meta:
         model = Food
-        fields = ("name", "category", "price", "image")
+        fields = ("id", "name", "category", "price", "image")
 
 
 class OrderItemSerializer_for_cart(OrderItemSerializer):

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from foods.models import Food, Discount
 from accounts.models import User
 
@@ -21,7 +23,8 @@ def _get_food_discount(food: Food, quantity: int) -> float:
 def _set_order_item(food: Food, quantity: int, user: User) -> [float, OrderItem]:
     try:
         order_item = OrderItem.objects.get(user=user, food=food)
-        old_oitp = order_item.total_price  # old Order Item Total Price
+        old_oirp = order_item.total_price - Decimal(order_item.discount)  # old Order Item Real Price
+        print(old_oirp)
 
         order_item.quantity = quantity
         order_item.total_price = food.price * quantity
@@ -36,9 +39,9 @@ def _set_order_item(food: Food, quantity: int, user: User) -> [float, OrderItem]
             discount=_get_food_discount(food, quantity),
             user=user,
         )
-        old_oitp = 0
+        old_oirp = 0
 
-    return old_oitp, order_item
+    return old_oirp, order_item
 
 
 def get_cart(user: User) -> Order:
@@ -47,10 +50,11 @@ def get_cart(user: User) -> Order:
 
 def update_order(food: Food, quantity: float, user: User) -> [Order, OrderItem]:
     order = get_cart(user)
-    old_oitp, order_item = _set_order_item(food, quantity, user)
-
-    order.final_price -= old_oitp
-    order.final_price += order_item.total_price
+    old_oirp, order_item = _set_order_item(food, quantity, user)
+    # update order-items list
     order.order_items.add(order_item)
+    # update new final price
+    order.final_price -= old_oirp
+    order.final_price += order_item.total_price - Decimal(order_item.discount)
     order.save()
     return order, order_item
