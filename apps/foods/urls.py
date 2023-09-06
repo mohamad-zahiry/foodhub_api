@@ -1,6 +1,12 @@
 from django.urls import path
 
-from .views import ListCreateFoodsView, CategoriesView, FoodByCategoryView, FoodUpdateDestroyView, FoodView
+from .views import (
+    ListCreateFoodsView,
+    CategoriesView,
+    FoodByCategoryView,
+    FoodUpdateView,
+    FoodRetrieveDestroyView,
+)
 
 basename = "foods"
 
@@ -10,7 +16,6 @@ urlpatterns = [
     path("create/", ListCreateFoodsView.as_view(http_method_names=["post"]), name="create_food"),
     path("category/<str:category>/", FoodByCategoryView.as_view(), name="food_by_category"),
     # FoodView with get method must be above the other routes, because it is not using authetication
-    path("<int:pk>/", FoodView.as_view(http_method_names=["get"]), name="view_food"),
-    path("<int:pk>/", FoodUpdateDestroyView.as_view(http_method_names=["put"]), name="update_food"),
-    path("<int:pk>/", FoodUpdateDestroyView.as_view(http_method_names=["delete"]), name="delete_food"),
+    path("<int:pk>/", FoodRetrieveDestroyView.as_view(), name="view_delete_food"),
+    path("update/<int:pk>/", FoodUpdateView.as_view(), name="update_food"),
 ]
