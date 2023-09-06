@@ -8,7 +8,7 @@ from constants import perm_name, P
 
 from .models import Food
 from .pagination import FoodByCategoryPagination
-from .serializers import FoodSerializer, FoodUpdateSerializer
+from .serializers import FoodCreateSerializer, FoodUpdateSerializer, FoodSerializer
 
 
 class CategoriesView(APIView):
@@ -32,7 +32,7 @@ class FoodByCategoryView(generics.ListAPIView):
 
 
 class ListCreateFoodsView(generics.ListCreateAPIView):
-    serializer_class = FoodSerializer
+    serializer_class = FoodCreateSerializer
     queryset = Food.objects.all()
     permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_DELETE_CHANGE_FOOD))]
 
