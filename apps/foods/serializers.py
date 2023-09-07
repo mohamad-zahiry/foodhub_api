@@ -10,6 +10,8 @@ class IngredientSerializer_for_add(serializers.PrimaryKeyRelatedField, serialize
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Ingredient
         fields = ("id", "name")

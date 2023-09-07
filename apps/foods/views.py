@@ -6,9 +6,21 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.utils import permission
 from constants import perm_name, P
 
-from .models import Food
+from .models import Food, Ingredient
 from .pagination import FoodByCategoryPagination
-from .serializers import FoodCreateSerializer, FoodUpdateSerializer, FoodSerializer
+from .serializers import FoodCreateSerializer, FoodUpdateSerializer, FoodSerializer, IngredientSerializer
+
+
+class IngredientListCreateView(generics.ListCreateAPIView):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_DELETE_CHANGE_FOOD))]
+
+
+class IngredientUpdateView(generics.UpdateAPIView):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = [IsAuthenticated, permission(perm_name(P.ADD_DELETE_CHANGE_FOOD))]
 
 
 class CategoriesView(APIView):

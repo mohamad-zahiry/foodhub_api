@@ -6,6 +6,8 @@ from .views import (
     FoodByCategoryView,
     FoodUpdateView,
     FoodRetrieveDestroyView,
+    IngredientListCreateView,
+    IngredientUpdateView,
 )
 
 basename = "foods"
@@ -18,4 +20,6 @@ urlpatterns = [
     # FoodView with get method must be above the other routes, because it is not using authetication
     path("<int:pk>/", FoodRetrieveDestroyView.as_view(), name="view_delete_food"),
     path("update/<int:pk>/", FoodUpdateView.as_view(), name="update_food"),
+    path("ingredient/", IngredientListCreateView.as_view(), name="list_create_ingrdient"),
+    path("ingredient/update/<int:pk>/", IngredientUpdateView.as_view(), name="update_ingrdient"),
 ]
