@@ -41,6 +41,8 @@ class User(AbstractUser):
     phone = PhoneNumberField(default="", blank=True)
     coupons = models.ManyToManyField(to="loyalty_club.Coupon")
     username = None
+    first_name = None
+    last_name = None
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
