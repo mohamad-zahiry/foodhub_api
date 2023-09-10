@@ -65,3 +65,8 @@ def delete_order_item(order_item: OrderItem):
     order.final_price -= order_item.total_price - Decimal(order_item.discount)
     order.save()
     order_item.delete()
+
+
+def finish_order(order: Order):
+    if order.status == Order.Status.IN_CART:
+        order.set_next_status()

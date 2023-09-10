@@ -1,10 +1,11 @@
+from django.core.exceptions import ValidationError
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import OrderItem
 from .serializers import OrderItemSerializer, CartSerializer
-from .utils import get_cart, delete_order_item
+from .utils import get_cart, delete_order_item, finish_order
 
 
 class CartView(generics.RetrieveAPIView):
@@ -35,3 +36,21 @@ class OrderItemDeleteView(generics.DestroyAPIView):
 
     def perform_destroy(self, instance):
         delete_order_item(instance)
+
+
+class FinishOrderView(generics.UpdateAPIView):
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_cart(self.request.user)
+
+    def put(self, request, *args, **kwargs):
+        order = self.get_object()
+        try:
+            finish_order(order)
+        except ValidationError as e:
+            return Response(e.messages, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(order)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
