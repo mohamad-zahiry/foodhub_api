@@ -20,9 +20,9 @@ def _get_food_discount(food: Food, quantity: int) -> float:
     return min(round(off, 2), food.price) * quantity
 
 
-def _set_order_item(food: Food, quantity: int, user: User) -> [float, OrderItem]:
+def _set_order_item(food: Food, quantity: int, user: User, order: Order) -> [float, OrderItem]:
     try:
-        order_item = OrderItem.objects.get(user=user, food=food)
+        order_item = order.order_items.get(user=user, food=food)
         old_oirp = order_item.total_price - Decimal(order_item.discount)  # old Order Item Real Price
         print(old_oirp)
 
@@ -50,7 +50,7 @@ def get_cart(user: User) -> Order:
 
 def update_order(food: Food, quantity: float, user: User) -> [Order, OrderItem]:
     order = get_cart(user)
-    old_oirp, order_item = _set_order_item(food, quantity, user)
+    old_oirp, order_item = _set_order_item(food, quantity, user, order)
     # update order-items list
     order.order_items.add(order_item)
     # update new final price
