@@ -8,7 +8,7 @@ from .models import OrderItem, Order
 from .serializers import (
     OrderItemSerializer,
     CartSerializer,
-    # OrderStatusSerializer,
+    OrderStatusSerializer,
     OrderSerializer,
 )
 from .utils import get_cart, delete_order_item, finish_order
@@ -65,6 +65,14 @@ class FinishOrderView(generics.UpdateAPIView):
 class OrderListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(Q(user=self.request.user) & ~Q(status=Order.Status.IN_CART))
+
+
+class OrderStatusView(generics.RetrieveAPIView):
+    serializer_class = OrderStatusSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(Q(user=self.request.user) & ~Q(status=Order.Status.IN_CART))

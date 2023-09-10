@@ -59,3 +59,11 @@ class OrderSerializer(CartSerializer):
     class Meta:
         model = Order
         fields = ("id", "status", "final_price", "order_items", "user", "date", "address", "coupon", "phone")
+
+
+class OrderStatusSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(read_only=True, source="get_status_display")
+
+    class Meta:
+        model = Order
+        fields = ("status",)
