@@ -33,6 +33,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class FoodSerializer_for_cart(serializers.ModelSerializer):
+    category = serializers.CharField(source="get_category_display")
+
     class Meta:
         model = Food
         fields = ("id", "name", "category", "price", "image")
@@ -48,3 +50,12 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("final_price", "order_items")
+
+
+class OrderSerializer(CartSerializer):
+    status = serializers.CharField(read_only=True, source="get_status_display")
+    order_items = OrderItemSerializer_for_cart(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ("id", "status", "final_price", "order_items", "user", "date", "address", "coupon", "phone")

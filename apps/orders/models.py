@@ -44,6 +44,12 @@ class Order(OrderAbstract):
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.IN_CART)
 
     def set_next_status(self):
+        if not self.order_items.exists():
+            raise ValidationError("you can't change status of an empty order")
+
+        if self.status == self.Status.ARRIVED:
+            return
+
         next_status = {
             self.Status.IN_CART: self.Status.WAIT_FOR_COOK,
             self.Status.WAIT_FOR_COOK: self.Status.COOKING,
@@ -51,8 +57,6 @@ class Order(OrderAbstract):
             self.Status.BOXING: self.Status.ON_WAY,
             self.Status.ON_WAY: self.Status.ARRIVED,
         }
-        if not self.order_items.exists():
-            raise ValidationError("you can't change status of an empty order")
         self.status = next_status[self.status]
         self.save()
 

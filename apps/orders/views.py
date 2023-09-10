@@ -1,10 +1,16 @@
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import OrderItem
-from .serializers import OrderItemSerializer, CartSerializer
+from .models import OrderItem, Order
+from .serializers import (
+    OrderItemSerializer,
+    CartSerializer,
+    # OrderStatusSerializer,
+    OrderSerializer,
+)
 from .utils import get_cart, delete_order_item, finish_order
 
 
@@ -54,3 +60,11 @@ class FinishOrderView(generics.UpdateAPIView):
 
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+
+class OrderListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(Q(user=self.request.user) & ~Q(status=Order.Status.IN_CART))
