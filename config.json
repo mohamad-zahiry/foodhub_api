@@ -7,5 +7,8 @@
     "DB_PORT": "3306",
     "PHONENUMBER_DEFAULT_REGION": "ISO-3166-1 two-letter country code",
     "ACCESS_TOKEN_LIFETIME_in_minute": 60,
-    "REFRESH_TOKEN_LIFETIME_in_minute": 2880
+    "REFRESH_TOKEN_LIFETIME_in_minute": 2880,
+    "IDPAY_API_KEY": "your-idpay-api-key",
+    "IDPAY_CALLBACK_URL": "your-domain.com/payment-callback/",
+    "IDPAY_SANDBOX_MODE": false
 }

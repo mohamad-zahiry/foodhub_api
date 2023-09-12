@@ -24,10 +24,10 @@ DATABASES = {
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=get_config("ACCESS_TOKEN_LIFETIME_in_minute")
-    ),
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        minutes=get_config("REFRESH_TOKEN_LIFETIME_in_minute")
-    ),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=get_config("ACCESS_TOKEN_LIFETIME_in_minute")),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=get_config("REFRESH_TOKEN_LIFETIME_in_minute")),
 }
+
+IDPAY_API_KEY = get_config("IDPAY_API_KEY")
+IDPAY_CALLBACK_URL = get_config("IDPAY_CALLBACK_URL")
+IDPAY_SANDBOX_MODE = get_config("IDPAY_SANDBOX_MODE")

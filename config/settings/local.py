@@ -20,10 +20,10 @@ DATABASES = {
 PHONENUMBER_DEFAULT_REGION = "IR"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=get_config("ACCESS_TOKEN_LIFETIME_in_minute")
-    ),
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        minutes=get_config("REFRESH_TOKEN_LIFETIME_in_minute")
-    ),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=get_config("ACCESS_TOKEN_LIFETIME_in_minute")),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=get_config("REFRESH_TOKEN_LIFETIME_in_minute")),
 }
+
+IDPAY_API_KEY = "6a7f99eb-7c20-4412-a972-6dfb7cd253a4"
+IDPAY_CALLBACK_URL = "http://localhost:8000/api/payments/callback/"
+IDPAY_SANDBOX_MODE = True
