@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "apps.loyalty_club",
     "apps.orders",
     "apps.constants",
+    "apps.payments",
 ]
 
 MIDDLEWARE = [
