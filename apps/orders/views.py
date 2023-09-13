@@ -8,7 +8,7 @@ from .models import OrderItem, Order
 from .serializers import (
     OrderItemSerializer,
     CartSerializer,
-    OrderStatusSerializer,
+    OrderStateSerializer,
     OrderSerializer,
     FinishOrderSerializer,
 )
@@ -58,12 +58,14 @@ class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        return Order.objects.filter(Q(user=self.request.user) & ~Q(status=Order.Status.IN_CART))
+        return Order.objects.filter(Q(user=self.request.user) & ~Q(state=Order.State.ORDER))
 
 
-class OrderStatusView(generics.RetrieveAPIView):
-    serializer_class = OrderStatusSerializer
+class OrderStateView(generics.RetrieveAPIView):
+    serializer_class = OrderStateSerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
 
     def get_queryset(self):
-        return Order.objects.filter(Q(user=self.request.user) & ~Q(status=Order.Status.IN_CART))
+        return Order.objects.filter(Q(user=self.request.user) & ~Q(state=Order.State.ORDER))

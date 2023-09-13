@@ -55,20 +55,21 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(CartSerializer):
-    status = serializers.CharField(read_only=True, source="get_status_display")
+    uuid = serializers.UUIDField(format="hex")
+    state = serializers.CharField(read_only=True, source="get_state_display")
     order_items = OrderItemSerializer_for_cart(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ("id", "status", "final_price", "order_items", "user", "date", "address", "coupon", "phone")
+        fields = ("uuid", "state", "final_price", "order_items", "user", "date", "address", "coupon", "phone")
 
 
-class OrderStatusSerializer(serializers.ModelSerializer):
-    status = serializers.CharField(read_only=True, source="get_status_display")
+class OrderStateSerializer(serializers.ModelSerializer):
+    state = serializers.CharField(read_only=True, source="get_state_display")
 
     class Meta:
         model = Order
-        fields = ("status",)
+        fields = ("state",)
 
 
 class FinishOrderSerializer(serializers.ModelSerializer):
