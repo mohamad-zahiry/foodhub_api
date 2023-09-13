@@ -1,8 +1,10 @@
 from rest_framework import serializers
+from phonenumber_field.serializerfields import PhoneNumberField
 
 from foods.models import Food
+from loyalty_club.models import Coupon
 
-from .utils import update_order
+from .utils import update_order, finish_order
 from .models import Order, OrderItem
 
 
@@ -67,3 +69,29 @@ class OrderStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("status",)
+
+
+class FinishOrderSerializer(serializers.ModelSerializer):
+    uuid = serializers.UUIDField(format="hex", read_only=True)
+    coupon = serializers.CharField(default=None)
+    phone = PhoneNumberField()
+    address = serializers.CharField()
+
+    class Meta:
+        model = Order
+        fields = ("uuid", "address", "phone", "coupon")
+
+    def validate_coupon(self, value):
+        try:
+            return Coupon.objects.get(code=value)
+        except Coupon.DoesNotExist:
+            return None
+
+    def update(self, instance, validated_data):
+        finish_order(
+            order=instance,
+            phone=validated_data["phone"],
+            address=validated_data["address"],
+            coupon=validated_data["coupon"],
+        )
+        return instance

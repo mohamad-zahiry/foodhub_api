@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -47,21 +46,6 @@ class Order(OrderAbstract):
     uuid = models.UUIDField(auto_created=True, default=uuid, editable=False)
     order_items = models.ManyToManyField(to="OrderItem")
     state = models.IntegerField(choices=State.choices, default=State.ORDER)
-
-    def set_next_state(self):
-        if not self.order_items.exists():
-            raise ValidationError("you can't change state of an empty order")
-
-        if self.status == self.Status.ARRIVED:
-            return
-
-        next_status = {
-            self.Status.ORDER: self.Status.PAYMENT,
-            self.Status.PAYMENT: self.Status.COOK,
-            self.Status.COOK: self.Status.DELIVERY,
-        }
-        self.status = next_status[self.status]
-        self.save()
 
 
 class DoneOrder(OrderAbstract):
