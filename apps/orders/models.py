@@ -1,3 +1,5 @@
+from uuid import uuid1
+
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.utils import timezone
@@ -5,6 +7,10 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
 from phonenumber_field.modelfields import PhoneNumberField
+
+
+def uuid():
+    return uuid1().hex
 
 
 class OrderItem(models.Model):
@@ -32,34 +38,37 @@ class OrderAbstract(models.Model):
 
 
 class Order(OrderAbstract):
-    class Status(models.TextChoices):
-        IN_CART = "I", _("In cart")
-        WAIT_FOR_COOK = "W", _("Waiting for cooking")
-        COOKING = "C", _("Cooking")
-        BOXING = "B", _("Boxing")
-        ON_WAY = "O", _("On the way")
-        ARRIVED = "A", _("Arrived")
+    class State(models.IntegerChoices):
+        ORDER = 0, _("Ordering")
+        PAYMENT = 1, _("Awaiting payment")
+        COOK = 2, _("Cooking")
+        DELIVERY = 3, _("Delivering")
 
+    uuid = models.UUIDField(auto_created=True, default=uuid, editable=False)
     order_items = models.ManyToManyField(to="OrderItem")
-    status = models.CharField(max_length=1, choices=Status.choices, default=Status.IN_CART)
+    state = models.IntegerField(choices=State.choices, default=State.ORDER)
 
-    def set_next_status(self):
+    def set_next_state(self):
         if not self.order_items.exists():
-            raise ValidationError("you can't change status of an empty order")
+            raise ValidationError("you can't change state of an empty order")
 
         if self.status == self.Status.ARRIVED:
             return
 
         next_status = {
-            self.Status.IN_CART: self.Status.WAIT_FOR_COOK,
-            self.Status.WAIT_FOR_COOK: self.Status.COOKING,
-            self.Status.COOKING: self.Status.BOXING,
-            self.Status.BOXING: self.Status.ON_WAY,
-            self.Status.ON_WAY: self.Status.ARRIVED,
+            self.Status.ORDER: self.Status.PAYMENT,
+            self.Status.PAYMENT: self.Status.COOK,
+            self.Status.COOK: self.Status.DELIVERY,
         }
         self.status = next_status[self.status]
         self.save()
 
 
 class DoneOrder(OrderAbstract):
+    uuid = models.UUIDField()
     order_items = models.ManyToManyField(to="DoneOrderItem")
+
+
+class CanceledOrder(DoneOrderItem):
+    order_items = models.JSONField()
+    reason = models.CharField(max_length=200)
