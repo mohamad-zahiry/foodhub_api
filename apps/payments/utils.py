@@ -21,18 +21,18 @@ def idpay() -> IDPayAPI:
 def _normalize_price(price: Decimal):
     """convert the Order.final_price to a value that payment gateway
     can accept that. in this project, IDPay accepts Rials as unit."""
-    return int(float(price) * 100)
+    return int(float(price) * 100 * 1000)
 
 
 def get_payment_link(user: User, order: Order) -> str:
     tcn, create = Transaction.objects.get_or_create(user=user, order_uuid=order.uuid)
     update_order_price(order)
 
-    if not create:
+    if tcn.payment_link:
         return tcn.payment_link
 
     operation = idpay().payment(
-        order.id,
+        tcn.order_uuid.int,
         _normalize_price(order.final_price),
         {
             "name": user.name,
