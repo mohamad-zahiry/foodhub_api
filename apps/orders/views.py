@@ -1,8 +1,13 @@
 from django.db.models import Q
-
+from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework.decorators import api_view
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.exceptions import NotAuthenticated, NotFound, ValidationError
+
+from constants import P, perm_name
+
 
 from .models import OrderItem, Order
 from .serializers import (
@@ -12,7 +17,7 @@ from .serializers import (
     OrderSerializer,
     FinishOrderSerializer,
 )
-from .utils import get_cart, delete_order_item
+from .utils import get_cart, delete_order_item, chef_update_order_state
 
 
 class CartView(generics.RetrieveAPIView):
@@ -69,3 +74,30 @@ class OrderStateView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(Q(user=self.request.user) & ~Q(state=Order.State.ORDER))
+
+
+@api_view(["POST"])
+def update_order_state(request, order_uuid):
+    if not request.user.has_perms([perm_name(P.CHANGE_ORDER_STATUS)]):
+        raise NotAuthenticated("you can not do this action")
+
+    states = {
+        "cook": Order.State.COOK,
+        "delivery": Order.State.DELIVERY,
+    }
+    try:
+        state = states[request.data.get("state")]
+        order = Order.objects.get(uuid=order_uuid)
+
+    except KeyError:
+        raise ValidationError('use like this: {"state": "cook|delivery"}')
+
+    except Order.DoesNotExist:
+        raise NotFound("order (uuid=%s) does not exist" % order_uuid)
+
+    except DjangoValidationError:
+        raise ValidationError("%s is not a valid order uuid" % order_uuid)
+
+    chef_update_order_state(order, state)
+    serializer = OrderStateSerializer(instance=order)
+    return Response(serializer.data, status=status.HTTP_200_OK)

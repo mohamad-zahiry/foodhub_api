@@ -79,3 +79,8 @@ def finish_order(order: Order, phone: str, address: Address, coupon: Coupon = No
 
 def update_order_price(order: Order):
     pass
+
+
+def chef_update_order_state(order: Order, state: Order.State):
+    order.state = state
+    order.save()
