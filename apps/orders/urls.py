@@ -8,6 +8,7 @@ from .views import (
     OrderStateView,
     OrderListView,
     update_order_state,
+    ChefOrderListView,
 )
 
 
@@ -21,4 +22,5 @@ urlpatterns = [
     path("state/<str:uuid>/", OrderStateView.as_view(), name="order_status"),
     path("", OrderListView.as_view(), name="orders_list"),
     path("chef/update/<str:order_uuid>/", update_order_state, name="chef_update_order_state"),
+    path("chef/list/", ChefOrderListView.as_view(), name="chef_list_orders"),
 ]

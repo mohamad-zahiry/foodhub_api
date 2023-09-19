@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotAuthenticated, NotFound, ValidationError
 
 from constants import P, perm_name
-
+from accounts.utils import permission
 
 from .models import OrderItem, Order
 from .serializers import (
@@ -16,8 +16,10 @@ from .serializers import (
     OrderStateSerializer,
     OrderSerializer,
     FinishOrderSerializer,
+    ChefOrderListSerializer,
 )
 from .utils import get_cart, delete_order_item, chef_update_order_state
+from .pagination import OrderListPagination
 
 
 class CartView(generics.RetrieveAPIView):
@@ -101,3 +103,10 @@ def update_order_state(request, order_uuid):
     chef_update_order_state(order, state)
     serializer = OrderStateSerializer(instance=order)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ChefOrderListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, permission(perm_name(P.CHANGE_ORDER_STATUS))]
+    queryset = Order.objects.filter(state=Order.State.COOK)
+    pagination_class = OrderListPagination
+    serializer_class = ChefOrderListSerializer

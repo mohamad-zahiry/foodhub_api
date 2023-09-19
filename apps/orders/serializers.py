@@ -96,3 +96,26 @@ class FinishOrderSerializer(serializers.ModelSerializer):
             coupon=validated_data["coupon"],
         )
         return instance
+
+
+class FoodSerializer_for_chef(serializers.ModelSerializer):
+    class Meta:
+        model = Food
+        fields = ("id", "name")
+
+
+class OrderItemSerializer_for_chef(serializers.ModelSerializer):
+    food = FoodSerializer_for_chef(read_only=True)
+    quantity = serializers.IntegerField()
+
+    class Meta:
+        model = OrderItem
+        fields = ("food", "quantity")
+
+
+class ChefOrderListSerializer(serializers.ModelSerializer):
+    order_items = OrderItemSerializer_for_chef(read_only=True, many=True)
+
+    class Meta:
+        model = Order
+        fields = ("uuid", "order_items")
