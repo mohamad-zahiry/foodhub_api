@@ -114,6 +114,7 @@ class OrderItemSerializer_for_chef(serializers.ModelSerializer):
 
 
 class ChefOrderListSerializer(serializers.ModelSerializer):
+    uuid = serializers.UUIDField(format="hex")
     order_items = OrderItemSerializer_for_chef(read_only=True, many=True)
 
     class Meta:
