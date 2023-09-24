@@ -49,7 +49,7 @@ class Order(OrderAbstract):
 
 
 class DoneOrder(OrderAbstract):
-    uuid = models.UUIDField()
+    uuid = models.UUIDField(unique=True)
     order_items = models.ManyToManyField(to="DoneOrderItem")
 
 
