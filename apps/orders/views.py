@@ -125,7 +125,7 @@ class ConfirmDeliveryView(views.APIView):
             )
 
         except Order.DoesNotExist:
-            msg = f"order (uuid={order_uuid}) does not exist"
+            msg = "order does not exist or already confrimed"
             return Response(msg, status=status.HTTP_404_NOT_FOUND)
 
         if confirm_delivery(order):
