@@ -5,6 +5,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import NotAuthenticated, NotFound, ValidationError
+from rest_framework import views
 
 from constants import P, perm_name
 from accounts.utils import permission
@@ -18,7 +19,7 @@ from .serializers import (
     FinishOrderSerializer,
     ChefOrderListSerializer,
 )
-from .utils import get_cart, delete_order_item, chef_update_order_state
+from .utils import get_cart, delete_order_item, chef_update_order_state, confirm_delivery
 from .pagination import OrderListPagination
 
 
@@ -110,3 +111,24 @@ class ChefOrderListView(generics.ListAPIView):
     queryset = Order.objects.filter(state=Order.State.COOK)
     pagination_class = OrderListPagination
     serializer_class = ChefOrderListSerializer
+
+
+class ConfirmDeliveryView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, order_uuid):
+        try:
+            order = Order.objects.get(
+                user=request.user,
+                state=Order.State.DELIVERY,
+                uuid=order_uuid,
+            )
+
+        except Order.DoesNotExist:
+            msg = f"order (uuid={order_uuid}) does not exist"
+            return Response(msg, status=status.HTTP_404_NOT_FOUND)
+
+        if confirm_delivery(order):
+            return Response("delivery confirmed", status=status.HTTP_202_ACCEPTED)
+
+        return Response("try again", status=status.HTTP_500_INTERNAL_SERVER_ERROR)

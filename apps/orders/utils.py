@@ -6,7 +6,7 @@ from foods.models import Food, Discount
 from accounts.models import User, Address
 from loyalty_club.models import Coupon
 
-from .models import Order, OrderItem
+from .models import Order, OrderItem, DoneOrder, DoneOrderItem
 
 
 def get_food_discount(food: Food, quantity: int) -> float:
@@ -84,3 +84,36 @@ def update_order_price(order: Order):
 def chef_update_order_state(order: Order, state: Order.State):
     order.state = state
     order.save()
+
+
+def confirm_delivery(order: Order) -> bool:
+    try:
+        done_order = DoneOrder()
+        done_order.user = order.user
+        done_order.date = order.date
+        done_order.address = order.address
+        done_order.final_price = order.final_price
+        done_order.coupon = order.coupon
+        done_order.phone = order.phone
+        done_order.uuid = order.uuid
+        done_order.save()
+
+        for oi in order.order_items.all():
+            doi = DoneOrderItem()
+            doi.food = oi.food
+            doi.quantity = oi.quantity
+            doi.total_price = oi.total_price
+            doi.discount = oi.discount
+            doi.user = oi.user
+            doi.save()
+            done_order.order_items.add(doi)
+            oi.delete()
+
+        done_order.save()
+        order.delete()
+
+    except Exception as e:
+        print(e.with_traceback(None))
+        return False
+
+    return True
