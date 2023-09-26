@@ -39,7 +39,6 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=128, blank=True)
     phone = PhoneNumberField(default="", blank=True)
-    coupons = models.ManyToManyField(to="loyalty_club.Coupon")
     username = None
     first_name = None
     last_name = None
